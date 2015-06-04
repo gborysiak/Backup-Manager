@@ -114,11 +114,13 @@ function clean_repositories()
 # backup-manager will stop here.
 function exec_pre_command()
 {
-    debug "exec_pre_command()"
+    [ -z $1 ] && step="BM_PRE_BACKUP_COMMAND" || step=$1
 
-    if [[ ! -z "$BM_PRE_BACKUP_COMMAND" ]]; then
-        info "Running pre-command: \$BM_PRE_BACKUP_COMMAND."
-        RET=`$BM_PRE_BACKUP_COMMAND >/dev/null 2>&1` || RET="false" 
+    debug "exec_pre_command() $step"
+
+    if [[ ! -z "${!step}" ]]; then
+        info "Running pre-command: \$$step."
+        RET=`${!step} >/dev/null 2>&1` || RET="false" 
         case "$RET" in
             "false")
                 warning "Pre-command failed. Stopping the process."
@@ -135,11 +137,13 @@ function exec_pre_command()
 
 function exec_post_command()
 {
-    debug "exec_post_command()"
+    [ -z $1 ] && step="BM_POST_BACKUP_COMMAND" || step=$1
 
-    if [[ ! -z "$BM_POST_BACKUP_COMMAND" ]]; then
-        info "Running post-command: \$BM_POST_BACKUP_COMMAND"
-        RET=`$BM_POST_BACKUP_COMMAND >/dev/null 2>&1` || RET="false"
+    debug "exec_post_command() $step"
+
+    if [[ ! -z "${!step}" ]]; then
+        info "Running post-command: \$$step"
+        RET=`${!step} >/dev/null 2>&1` || RET="false"
         case "$RET" in
             "false")
                 warning "Post-command failed."

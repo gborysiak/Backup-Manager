@@ -212,13 +212,17 @@ create_directories
 
 if [[ "$upload" == "true" ]]; then
     debug "Running the upload methods"
+    exec_pre_command BM_PRE_UPLOAD_COMMAND
     upload_files
+    exec_post_command BM_POST_UPLOAD_COMMAND
     _exit 0
 fi
 
 if [[ "$burn" == "true" ]]; then
     debug "Running the burning methods"
+    exec_pre_command BM_PRE_BURN_COMMAND
     burn_files
+    exec_post_command BM_POST_BURN_COMMAND
     _exit 0
 fi
 
@@ -230,7 +234,9 @@ fi
 
 if [[ "$purge" == "true" ]]; then
     debug "Purging the repository"
+    exec_pre_command BM_PRE_PURGE_COMMAND
     clean_repositories
+    exec_post_command BM_POST_PURGE_COMMAND
     _exit 0
 fi
 
@@ -240,23 +246,31 @@ fi
 if [[ "$nopurge" != "true" ]]; then
     debug "Purging the repository"
     bm_dbus_send_progress 10 "Cleaning repositories"
+    exec_pre_command "BM_PRE_PURGE_COMMAND"
     clean_repositories
+    exec_post_command "BM_POST_PURGE_COMMAND"
 fi
 
 debug "Building archives"
 bm_dbus_send_progress 20 "Building archives"
+exec_pre_command "BM_PRE_ARCHIVE_COMMAND"
 make_archives
+exec_post_command "BM_POST_ARCHIVE_COMMAND"
 
 if [[ "$noupload" != "true" ]]; then
     debug "Running the upload methods"
     bm_dbus_send_progress 60 "Uploading backups"
+    exec_pre_command "BM_PRE_UPLOAD_COMMAND"
     upload_files
+    exec_post_command "BM_POST_UPLOAD_COMMAND"
 fi
 
 if [[ "$noburn" != "true" ]]; then
     debug "Running the burning methods"
     bm_dbus_send_progress 80 "Burning backups"
+    exec_pre_command "BM_PRE_BURN_COMMAND"
     burn_files
+    exec_post_command "BM_POST_BURN_COMMAND"
 fi
 
 debug "Running post-command"

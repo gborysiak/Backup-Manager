@@ -532,11 +532,37 @@ export BM_LOGGER_LEVEL="warning"
 # You can choose which facility to use
 export BM_LOGGER_FACILITY="user"
 
-# Enter here some shell script.
+
+##############################################################
+# Hooks, shell scripts executed after or before actions
+#############################################################
+
 # It will be executed before the first action of backup-manager.
 export BM_PRE_BACKUP_COMMAND=""
 
-# Enter here some shell script.
 # It will be executed after the last action of backup-manager.
 export BM_POST_BACKUP_COMMAND=""
 
+# It will be executed before purge action.
+export BM_PRE_PURGE_COMMAND=""
+
+# It will be executed after purge action.
+export BM_POST_PURGE_COMMAND=""
+
+# It will be executed before archive action.
+export BM_PRE_ARCHIVE_COMMAND=""
+
+# It will be executed after archive action.
+export BM_POST_ARCHIVE_COMMAND=""
+
+# It will be executed before upload action.
+export BM_PRE_UPLOAD_COMMAND=""
+
+# It will be executed after upload action.
+export BM_POST_UPLOAD_COMMAND=""
+
+# It will be executed before burning action.
+export BM_PRE_BURN_COMMAND=""
+
+# It will be executed after burning action.
+export BM_POST_BURN_COMMAND=""
