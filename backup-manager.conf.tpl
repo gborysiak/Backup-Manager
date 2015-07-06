@@ -225,6 +225,12 @@ export BM_MYSQL_FILETYPE="bzip2"
 # command line.)
 export BM_MYSQL_EXTRA_OPTIONS=""
 
+# Make separate backups of each database?
+export BM_MYSQL_SEPARATELY="true"
+
+# Specify DBs to exclude here (separated by space)
+export BM_MYSQL_DBEXCLUDE=""
+
 ##############################################################
 # Backup method: PostgreSQL
 #############################################################
@@ -447,6 +453,11 @@ export BM_UPLOAD_S3_SECRET_KEY=""
 
 # purge archives on remote hosts before uploading?
 export BM_UPLOAD_S3_PURGE="false"
+
+# You can specify a time to live for archives uploaded to S3
+# This can let you use different ttl's locally and remotely
+# By default, BM_ARCHIVE_TTL will be used.
+export BM_UPLOAD_S3_TTL=""
 
 ##############################################################
 # The RSYNC method

@@ -165,10 +165,13 @@ function __exec_meta_command()
                 tail_logfile "$logfile"
                 if [[ "$BM_ENCRYPTION_METHOD" = "gpg" ]]; then
                     $command 2>$logfile | $nice $compress_bin -f -q -9 2>$logfile | $nice $gpg $BM__GPG_HOMEDIR -r "$BM_ENCRYPTION_RECIPIENT" -e > $file_to_create.$ext.gpg 2> $logfile
+                    cmdpipestatus=${PIPESTATUS[0]}
                     debug "$command | $nice $compress_bin -f -q -9 | $nice $gpg $BM__GPG_HOMEDIR -r \"$BM_ENCRYPTION_RECIPIENT\" -e > $file_to_create.$ext.gpg 2> $logfile"
                     file_to_create="$file_to_create.$ext.gpg"
                 else
                     $command 2> $logfile | $nice $compress_bin -f -q -9 > $file_to_create.$ext 2> $logfile
+                    cmdpipestatus=${PIPESTATUS[0]}
+                    debug "$command 2> $logfile | $nice $compress_bin -f -q -9 > $file_to_create.$ext 2> $logfile"
                     file_to_create="$file_to_create.$ext"
                 fi
 
@@ -176,7 +179,12 @@ function __exec_meta_command()
                     warning "Unable to exec \$command; check \$logfile"
                     rm -f $file_to_create
                 else
-                    rm -f $logfile
+                    if [[ $cmdpipestatus -gt 0 ]]; then
+                        warning "Unable to exec first piped command \$command; check \$logfile"
+                        rm -f $file_to_create
+                    else
+                        rm -f $logfile
+                    fi
                 fi
             else
                 error "Compressor \$compress is needed."
@@ -983,6 +991,25 @@ function backup_method_mysql()
     fi
     base_command="$mysqldump --defaults-extra-file=$mysql_conffile $opt -u$BM_MYSQL_ADMINLOGIN -h$BM_MYSQL_HOST -P$BM_MYSQL_PORT $BM_MYSQL_EXTRA_OPTIONS"
     compress="$BM_MYSQL_FILETYPE"   
+
+    # get each DB name if backing up separately
+    if [ "$BM_MYSQL_DATABASES" = "__ALL__" ]; then
+        if [ "$BM_MYSQL_SEPARATELY" = "true" ]; then
+            if [[ ! -x $mysql ]]; then
+                error "Can�t find "$mysql" but this is needed when backing up databases separately."
+            fi
+
+            DBNAMES=$($mysql --defaults-extra-file=$mysql_conffile -u $BM_MYSQL_ADMINLOGIN -h $BM_MYSQL_HOST -P $BM_MYSQL_PORT -B -N -e "show databases" | sed 's/ /%/g')
+
+            # if DBs are excluded
+            for exclude in $BM_MYSQL_DBEXCLUDE
+            do
+                DBNAMES=$(echo $DBNAMES | sed "s/\b$exclude\b//g")
+            done
+
+            BM_MYSQL_DATABASES=$DBNAMES
+        fi
+    fi
 
     for database in $BM_MYSQL_DATABASES
     do
