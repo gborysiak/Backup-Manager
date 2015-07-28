@@ -1,1 +1,6 @@
 t/test
+po/*.mo
+po/*.po.old
+po/backup-manager.files
+po/backup-manager.pot
+manpages-stamp
