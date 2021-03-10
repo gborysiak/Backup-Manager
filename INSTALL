@@ -16,4 +16,7 @@ You can then edit /etc/backup-manager.conf to fit your needs.
 Refere to the user guide for details: 
 http://www.backup-manager.org/documentation/user-guide/
 
+Ubuntu 20
+require gettext package
+$ apt install gettext
 
